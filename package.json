@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@mapbox/togeojson": "^0.16.2",
-    "@next/swc-win32-x64-msvc": "^14.0.4",
     "@turf/turf": "^6.5.0",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
