@@ -19,3 +19,20 @@
 body {
   
 }
+
+
+.point-inside-marker {
+  background-color: green;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+}
+
+.point-outside-marker {
+  background-color: red;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+}
+
+

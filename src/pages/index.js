@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
+
 import proj4 from "proj4";
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("@/components/Map"), { ssr: false })
+
 
 const convertCoordinates = (utmCoordinates, utmZone) => {
   if (!utmZone) {
@@ -169,42 +174,101 @@ const ConverterPage = () => {
     setConvertedCoordinates(updatedConvertedCoordinates);
   };
 
+  const [manualLatitude, setManualLatitude] = useState("");
+  const [manualLongitude, setManualLongitude] = useState("");
+
+  const handleAddManualPoint = () => {
+    const latitude = parseFloat(manualLatitude);
+    const longitude = parseFloat(manualLongitude);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      alert("Please enter valid numeric coordinates.");
+      return;
+    }
+
+    setCoordinatesArray([...coordinatesArray, [longitude, latitude]]);
+    setConvertedCoordinates([]);
+    setManualLatitude("");
+    setManualLongitude("");
+  };
+
   return (
     <div className='container mx-auto p-4'>
       <div className='mt-4 text-3xl font-bold text-center '>
         <p>Nord SAHARA TO WGS converter (UTM) </p>
       </div>
-      <label htmlFor='utmZone' className='block mb-2'>
-        Select UTM Zone:
-      </label>
-      <select
-        id='utmZone'
-        onChange={(e) => setUtmZone(parseInt(e.target.value))}
-        className='border border-gray-300 p-2 rounded mb-4'
-      >
-        <option value='' disabled selected>
-          Choose UTM Zone
-        </option>
-        <option value='29'>Zone 29</option>
-        <option value='30'>Zone 30</option>
-        <option value='31'>Zone 31</option>
-        <option value='32'>Zone 32</option>
-      </select>
+      <div className="flex gap-1">
+        <p className="font-semibold">
+          Upload a CSV
+        </p>
+        <input
+          type='file'
+          id='fileInput'
+          accept='.csv'
+          onChange={handleFileChange}
+          className='mb-4'
+        />
+      </div>
+      <div className="flex gap-2">
+        <div className='mb-4 flex gap-1 items-center'>
+          <label htmlFor='manualLatitude' className='block mb-2'>
+            X
+          </label>
+          <input
+            type='text'
+            id='manualLatitude'
+            value={manualLatitude}
+            onChange={(e) => setManualLatitude(e.target.value)}
+            className='border border-gray-300 p-2 rounded mb-2'
+          />
+        </div>
 
-      <input
-        type='file'
-        id='fileInput'
-        accept='.csv'
-        onChange={handleFileChange}
-        className='mb-4'
-      />
+        <div className='mb-4 flex gap-1 items-center'>
+          <label htmlFor='manualLongitude' className='block mb-2'>
+            Y
+          </label>
+          <input
+            type='text'
+            id='manualLongitude'
+            value={manualLongitude}
+            onChange={(e) => setManualLongitude(e.target.value)}
+            className='border border-gray-300 p-2 rounded mb-2'
+          />
+        </div>
 
-      <button
-        onClick={handleConvert}
-        className='bg-blue-500 text-white px-4 py-2 rounded mb-4'
-      >
-        Convert Coordinates
-      </button>
+        <button
+          onClick={handleAddManualPoint}
+          className='bg-gray-500 text-white px-4 py-2 rounded mb-4'
+        >
+          Add  Point
+        </button>
+
+      </div>
+      <div className="flex gap-2 items-center">
+        <label htmlFor='utmZone' className='block mb-2'>
+          Select UTM Zone:
+        </label>
+        <select
+          id='utmZone'
+          onChange={(e) => setUtmZone(parseInt(e.target.value))}
+          className='border border-gray-300 p-2 rounded mb-4'
+        >
+          <option value='' disabled selected>
+            Choose UTM Zone
+          </option>
+          <option value='29'>Zone 29</option>
+          <option value='30'>Zone 30</option>
+          <option value='31'>Zone 31</option>
+          <option value='32'>Zone 32</option>
+        </select>
+        <button
+          onClick={handleConvert}
+          className='bg-blue-500 text-white px-4 py-2 rounded mb-4'
+        >
+          Convert Coordinates
+        </button>
+      </div>
+
 
       {coordinatesArray.length > 0 && (
         <div className='mb-8'>
@@ -269,12 +333,7 @@ const ConverterPage = () => {
                 );
               })}
             </tbody>
-            <button
-              onClick={handleAddPoint}
-              className='bg-gray-500 text-white px-4 py-2 rounded my-2'
-            >
-              Add Point
-            </button>
+
           </table>
 
           <button
@@ -284,12 +343,16 @@ const ConverterPage = () => {
           >
             Download KML
           </button>
+          <Map polygonCoordinates={convertedCoordinates.map(coord => [coord.latitude, coord.longitude])} />
 
           <div className='mt-4 text-xl font-bold text-right '>
             <p>Surface Area: {calculateSurfaceArea().toFixed(2)} hectares</p>
           </div>
+
         </div>
+
       )}
+
     </div>
   );
 };
