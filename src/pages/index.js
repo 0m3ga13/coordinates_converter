@@ -51,6 +51,7 @@ const ConverterPage = () => {
   const [coordinatesArray, setCoordinatesArray] = useState([]);
   const [convertedCoordinates, setConvertedCoordinates] = useState([]);
   const [kmlContent, setKmlContent] = useState("");
+  const [kmlFillColor, setKmlFillColor] = useState("#00FF00"); // Default color is green
 
   const handleFileChange = (event) => {
     const fileInput = event.target;
@@ -103,27 +104,34 @@ const ConverterPage = () => {
   const generateKML = (coordinates) => {
     let kmlString = `<?xml version="1.0" encoding="UTF-8"?>
       <kml xmlns="http://www.opengis.net/kml/2.2">
-    <Document>
-        <name>Converted Coordinates</name>
-        <Placemark>
+        <Document>
+          <name>Converted Coordinates</name>
+          <Placemark>
             <name>Converted Coordinates</name>
+            <Style>
+              <LineStyle>
+                <color>${kmlLineColor}</color>
+              </LineStyle>
+              <PolyStyle>
+                <color>${kmlFillColor}</color>
+              </PolyStyle>
+            </Style>
             <LineString>
-                <coordinates>`;
+              <coordinates>`;
 
     coordinates.forEach((coord) => {
-        kmlString += `${coord.longitude},${coord.latitude},0 `;
+      kmlString += `${coord.longitude},${coord.latitude},0 `;
     });
 
-    // Repeat the first coordinate to close the polygon
     const firstCoordinate = coordinates[0];
     kmlString += `${firstCoordinate.longitude},${firstCoordinate.latitude},0 `;
 
     kmlString += `</coordinates>
             </LineString>
-        </Placemark>
-    </Document>
-</kml>
-`;
+          </Placemark>
+        </Document>
+      </kml>
+    `;
 
     return kmlString;
   };
@@ -212,6 +220,17 @@ const ConverterPage = () => {
           accept='.csv'
           onChange={handleFileChange}
           className='mb-4'
+        />
+      </div>
+             <div className="flex gap-2 items-center">
+        <label htmlFor='kmlFillColor' className='block mb-2'>
+          Select Fill Color:
+        </label>
+        <input
+          type="color"
+          id="kmlFillColor"
+          value={kmlFillColor}
+          onChange={(e) => setKmlFillColor(e.target.value)}
         />
       </div>
       <div className="flex gap-2">
