@@ -103,22 +103,27 @@ const ConverterPage = () => {
   const generateKML = (coordinates) => {
     let kmlString = `<?xml version="1.0" encoding="UTF-8"?>
       <kml xmlns="http://www.opengis.net/kml/2.2">
-        <Document>
-          <name>Converted Coordinates</name>
-          <Placemark>
+    <Document>
+        <name>Converted Coordinates</name>
+        <Placemark>
             <name>Converted Coordinates</name>
             <LineString>
-              <coordinates>`;
+                <coordinates>`;
 
     coordinates.forEach((coord) => {
-      kmlString += `${coord.longitude},${coord.latitude},0 `;
+        kmlString += `${coord.longitude},${coord.latitude},0 `;
     });
+
+    // Repeat the first coordinate to close the polygon
+    const firstCoordinate = coordinates[0];
+    kmlString += `${firstCoordinate.longitude},${firstCoordinate.latitude},0 `;
 
     kmlString += `</coordinates>
             </LineString>
-          </Placemark>
-        </Document>
-      </kml>`;
+        </Placemark>
+    </Document>
+</kml>
+`;
 
     return kmlString;
   };
