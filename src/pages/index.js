@@ -51,7 +51,7 @@ const ConverterPage = () => {
   const [coordinatesArray, setCoordinatesArray] = useState([]);
   const [convertedCoordinates, setConvertedCoordinates] = useState([]);
   const [kmlContent, setKmlContent] = useState("");
-  const [kmlFillColor, setKmlFillColor] = useState("#00FF00"); // Default color is green
+  const [polygonColor, setPolygonColor] = useState("#FF0000"); 
 
   const handleFileChange = (event) => {
     const fileInput = event.target;
@@ -98,45 +98,51 @@ const ConverterPage = () => {
 
     // Generate KML content
     const kmlData = generateKML(convertedCoords);
-  setKmlContent(kmlData);
+    setKmlContent(kmlData);
   };
 
-const generateKML = (coordinates) => {
-  let kmlString = `<?xml version="1.0" encoding="UTF-8"?>
+  const generateKML = (coordinates) => {
+      let kmlString = `<?xml version="1.0" encoding="UTF-8"?>
     <kml xmlns="http://www.opengis.net/kml/2.2">
       <Document>
+        <name>Converted Coordinates</name>
+        <Style id="polyStyle">
+          <LineStyle>
+            <color>${hexToKMLColor(polygonColor)}</color>
+            <width>2</width>
+          </LineStyle>
+          <PolyStyle>
+            <color>${hexToKMLColor(polygonColor)}</color>
+          </PolyStyle>
+        </Style>
+        <Placemark>
+          <styleUrl>#polyStyle</styleUrl>
           <name>Converted Coordinates</name>
-          <Placemark>
-              <name>Converted Coordinates</name>
-              <Style>
-                <LineStyle>
-                  <color>${kmlLineColor}</color>
-                </LineStyle>
-                <PolyStyle>
-                  <color>${kmlFillColor}</color>
-                </PolyStyle>
-              </Style>
-              <LineString>
-                  <coordinates>`;
+          <LineString>
+            <coordinates>`;
 
-  coordinates.forEach((coord) => {
-    kmlString += `${coord.longitude},${coord.latitude},0 `;
-  });
+    coordinates.forEach((coord) => {
+        kmlString += `${coord.longitude},${coord.latitude},0 `;
+    });
 
-  // Repeat the first coordinate to close the polygon
-  const firstCoordinate = coordinates[0];
-  kmlString += `${firstCoordinate.longitude},${firstCoordinate.latitude},0 `;
+    // Repeat the first coordinate to close the polygon
+    const firstCoordinate = coordinates[0];
+    kmlString += `${firstCoordinate.longitude},${firstCoordinate.latitude},0 `;
 
-  kmlString += `</coordinates>
-              </LineString>
-          </Placemark>
-      </Document>
-    </kml>
-  `;
+    kmlString += `</coordinates>
+            </LineString>
+        </Placemark>
+    </Document>
+</kml>
+`;
 
-  return kmlString;
+    return kmlString;
+  };
+
+const hexToKMLColor = (hexColor) => {
+  const rgba = hexColor.match(/.{1,2}/g).map((hex) => parseInt(hex, 16));
+  return `${rgba[3].toString(16).toUpperCase()}${rgba[2].toString(16)}${rgba[1].toString(16)}${rgba[0].toString(16)}`;
 };
-
 
   const downloadKML = () => {
     const blob = new Blob([kmlContent], {
@@ -224,17 +230,6 @@ const generateKML = (coordinates) => {
           className='mb-4'
         />
       </div>
-             <div className="flex gap-2 items-center">
-        <label htmlFor='kmlFillColor' className='block mb-2'>
-          Select Fill Color:
-        </label>
-        <input
-          type="color"
-          id="kmlFillColor"
-          value={kmlFillColor}
-          onChange={(e) => setKmlFillColor(e.target.value)}
-        />
-      </div>
       <div className="flex gap-2">
         <div className='mb-4 flex gap-1 items-center'>
           <label htmlFor='manualLongitude' className='block mb-2'>
@@ -287,6 +282,16 @@ const generateKML = (coordinates) => {
           <option value='31'>Zone 31</option>
           <option value='32'>Zone 32</option>
         </select>
+      <label htmlFor='polygonColor' className='block mb-2'>
+        Select Polygon Color:
+      </label>
+        <input
+      type='color'
+      id='polygonColor'
+      value={polygonColor}
+      onChange={(e) => setPolygonColor(e.target.value)}
+      className='border border-gray-300 p-2 rounded mb-4'
+        />
         <button
           onClick={handleConvert}
           className='bg-blue-500 text-white px-4 py-2 rounded mb-4'
