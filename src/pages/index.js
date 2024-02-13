@@ -98,43 +98,45 @@ const ConverterPage = () => {
 
     // Generate KML content
     const kmlData = generateKML(convertedCoords);
-    setKmlContent(kmlData);
+  setKmlContent(kmlData);
   };
 
-  const generateKML = (coordinates) => {
-    let kmlString = `<?xml version="1.0" encoding="UTF-8"?>
-      <kml xmlns="http://www.opengis.net/kml/2.2">
-        <Document>
+const generateKML = (coordinates) => {
+  let kmlString = `<?xml version="1.0" encoding="UTF-8"?>
+    <kml xmlns="http://www.opengis.net/kml/2.2">
+      <Document>
           <name>Converted Coordinates</name>
           <Placemark>
-            <name>Converted Coordinates</name>
-            <Style>
-              <LineStyle>
-                <color>${kmlLineColor}</color>
-              </LineStyle>
-              <PolyStyle>
-                <color>${kmlFillColor}</color>
-              </PolyStyle>
-            </Style>
-            <LineString>
-              <coordinates>`;
+              <name>Converted Coordinates</name>
+              <Style>
+                <LineStyle>
+                  <color>${kmlLineColor}</color>
+                </LineStyle>
+                <PolyStyle>
+                  <color>${kmlFillColor}</color>
+                </PolyStyle>
+              </Style>
+              <LineString>
+                  <coordinates>`;
 
-    coordinates.forEach((coord) => {
-      kmlString += `${coord.longitude},${coord.latitude},0 `;
-    });
+  coordinates.forEach((coord) => {
+    kmlString += `${coord.longitude},${coord.latitude},0 `;
+  });
 
-    const firstCoordinate = coordinates[0];
-    kmlString += `${firstCoordinate.longitude},${firstCoordinate.latitude},0 `;
+  // Repeat the first coordinate to close the polygon
+  const firstCoordinate = coordinates[0];
+  kmlString += `${firstCoordinate.longitude},${firstCoordinate.latitude},0 `;
 
-    kmlString += `</coordinates>
-            </LineString>
+  kmlString += `</coordinates>
+              </LineString>
           </Placemark>
-        </Document>
-      </kml>
-    `;
+      </Document>
+    </kml>
+  `;
 
-    return kmlString;
-  };
+  return kmlString;
+};
+
 
   const downloadKML = () => {
     const blob = new Blob([kmlContent], {
