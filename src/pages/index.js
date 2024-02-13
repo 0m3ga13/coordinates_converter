@@ -216,27 +216,27 @@ const ConverterPage = () => {
       </div>
       <div className="flex gap-2">
         <div className='mb-4 flex gap-1 items-center'>
-          <label htmlFor='manualLatitude' className='block mb-2'>
-            X
-          </label>
-          <input
-            type='text'
-            id='manualLatitude'
-            value={manualLatitude}
-            onChange={(e) => setManualLatitude(e.target.value)}
-            className='border border-gray-300 p-2 rounded mb-2'
-          />
-        </div>
-
-        <div className='mb-4 flex gap-1 items-center'>
           <label htmlFor='manualLongitude' className='block mb-2'>
-            Y
+            X
           </label>
           <input
             type='text'
             id='manualLongitude'
             value={manualLongitude}
             onChange={(e) => setManualLongitude(e.target.value)}
+            className='border border-gray-300 p-2 rounded mb-2'
+          />
+        </div>
+
+        <div className='mb-4 flex gap-1 items-center'>
+          <label htmlFor='manualLatitude' className='block mb-2'>
+            Y
+          </label>
+          <input
+            type='text'
+            id='manualLatitude'
+            value={manualLatitude}
+            onChange={(e) => setManualLatitude(e.target.value)}
             className='border border-gray-300 p-2 rounded mb-2'
           />
         </div>
